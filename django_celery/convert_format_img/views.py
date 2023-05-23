@@ -9,7 +9,7 @@ from rest_framework import status, serializers
 
 from convert_format_img.models import ImagesFormat
 from convert_format_img.serializers import convert_format_img_Serializer
-from .tasks import invert_image_colors
+from .tasks import invert_image_colors, convert_image_to_black
 # Create your views here.
 
 class ImagesFormatViewSet(ModelViewSet):
@@ -42,16 +42,24 @@ class ImagesFormatViewSet(ModelViewSet):
 
 def my_view(request):
     # Get the path to the image file from the request
-    image_path = ImagesFormat.objects.get(id = 2).values('img')
+    image_path = ImagesFormat.objects.filter(id = 2)
+    
+    data = list(image_path.values('img'))
 
     # Call the Celery task asynchronously
-    invert_image_colors.delay(image_path)
+    invert_image_colors.delay(data)
 
     # Return a response to the client
-    return JsonResponse({'status': 'ok', 'data': image_path})
+    return JsonResponse({'status': 'ok', 'data': data}, safe=False)
 
+def my_view2(request):
+    # Get the path to the image file from the request
+    image_path = ImagesFormat.objects.filter(id = 2)
+    
+    data = list(image_path.values('img'))
 
-"""def test(request):
-    test_func.delay()
-    return HttpResponse('DONE!')
-"""
+    # Call the Celery task asynchronously
+    convert_image_to_black.delay(data)
+
+    # Return a response to the client
+    return JsonResponse({'status': 'ok', 'data': data}, safe=False)

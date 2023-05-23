@@ -9,7 +9,8 @@ router = DefaultRouter()
 router.register(r'img_format', ImagesFormatViewSet)
 
 urlpatterns = [
-    path('test/', views.my_view, name='test')
+    path('test/', views.my_view, name='test'),
+    path('test2/', views.my_view2, name='test2')
 ]
 
 urlpatterns += router.urls
