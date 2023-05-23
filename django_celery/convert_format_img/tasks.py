@@ -1,16 +1,15 @@
-"""from celery.decorators import task
-from celery.utils.log import get_task_logger
-from time import sleep
-logger = get_task_logger(__name__)
-@task(name='my_first_task')
-def my_first_task(duration):
-    sleep(duration)
-    return('first_task_done')"""
-    
 from celery import shared_task
+from PIL import Image, ImageChops
 
-@shared_task(bind=True)
-def test_func(self):
-    for i in range(10):
-        print(i)
-    return 'Done!'
+@shared_task
+def invert_image_colors(image_path):
+# Opening the test image, and saving it's object
+    img = Image.open('./public/img/imagen_prueba.jpg')
+    
+    # Passing the image object to invert() 
+    inv_img = ImageChops.invert(img)
+    
+    # Displaying the output image
+    inv_img.show()
+    
+    inv_img.save(image_path)
